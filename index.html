@@ -1,12 +1,691 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Webpage</title>
+    <title>YUGUO - HCI人机交互设计师/工程师</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* 自定义样式和颜色变量 */
+        :root {
+            --bg-main: #FFFBF9;
+            --bg-section: #FDF2F2;
+            --accent: #E69595;
+            --accent-hover: #D98282;
+            --text-dark: #4D4242;
+            --text-light: #F5EBEB;
+            --hero-bg: #453C3C;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.07), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            scroll-behavior: smooth;
+        }
+        .hero-bg {
+            background-color: var(--hero-bg);
+            color: var(--text-light);
+        }
+        .section-title {
+            @apply text-3xl font-bold mb-8 text-center;
+            color: var(--text-dark);
+            position: relative;
+            display: inline-block;
+        }
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent);
+        }
+        .card {
+            background-color: white;
+            border-radius: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover);
+        }
+        .card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-img {
+            height: 220px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .modal {
+            @apply fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50;
+            display: none;
+        }
+        .modal-content {
+            @apply bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+            @apply px-5 py-2.5 rounded-xl font-semibold transition-colors;
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-hover);
+        }
+        .tag {
+            background-color: var(--bg-section);
+            color: var(--accent);
+            @apply text-xs font-semibold px-3 py-1 rounded-full;
+            transition: all 0.2s ease;
+        }
+        .tag:hover {
+            transform: scale(1.05);
+        }
+        .nav-link {
+            position: relative;
+        }
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover:after {
+            width: 100%;
+        }
+    </style>
 </head>
-<body>
-    <h1>Welcome to My Personal Webpage</h1>
-    <p>This is a basic HTML starter template.</p>
+<body class="text-gray-700">
+
+    <!-- 导航栏 -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl font-bold" style="color: var(--text-dark);">江晓云 Xiaoyun Jiang</a>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#about" class="nav-link hover:text-[var(--accent)] transition-colors">关于我</a>
+                <a href="#projects" class="nav-link hover:text-[var(--accent)] transition-colors">项目</a>
+                <a href="#patents" class="nav-link hover:text-[var(--accent)] transition-colors">专利</a>
+                <a href="#contact" class="nav-link hover:text-[var(--accent)] transition-colors">联系我</a
+            </div>
+            <button id="mobile-menu-button" class="md:hidden">
+                <i class="fas fa-bars text-2xl" style="color: var(--text-dark);"></i>
+            </button>
+        </nav>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 bg-white/95">
+            <a href="#about" class="block py-3 hover:text-[var(--accent)] border-b border-gray-100">关于我</a>
+            <a href="#projects" class="block py-3 hover:text-[var(--accent)] border-b border-gray-100">项目</a>
+            <a href="#patents" class="block py-3 hover:text-[var(--accent)] border-b border-gray-100">专利</a>
+            <a href="#contact" class="block py-3 hover:text-[var(--accent)] border-b border-gray-100">联系我</a>  
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <main>
+        
+       <!-- 欢迎区域 -->
+<section class="hero-bg py-20 md:py-32">
+    <div class="container mx-auto px-6 text-center">
+        <img src="https://raw.githubusercontent.com/Shay-sponge/PersonalWeb/main/image.jpg" alt="" class="w-30 h-40 rounded-full mx-auto mb-6 border-4 border-white/50 shadow-lg hover:scale-105 transition-transform duration-300">
+        <h1 class="text-4xl md:text-6xl font-bold mb-4">HCI人机交互设计师/工程师</h1>
+        <p class="text-lg md:text-xl max-w-3xl mx-auto mb-8" style="color: var(--text-light);">
+            XR/AI-human Interaction/Machine Learning/Robotics/HMI。
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="#projects" class="bg-white font-semibold px-8 py-3 rounded-xl hover:bg-gray-200 transition-all transform hover:scale-105" style="color: var(--accent);">
+                <i class="fas fa-eye mr-2"></i>查看作品
+            </a>
+            <a href="#contact" class="bg-white/20 text-white font-semibold px-8 py-3 rounded-xl hover:bg-white/30 transition-all transform hover:scale-105">
+                <i class="fas fa-paper-plane mr-2"></i>联系我
+            </a>
+        </div>
+    </div>
+</section>
+
+        <!-- 关于我 -->
+        <section id="about" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">关于我</h2>
+                <div class="max-w-4xl mx-auto">
+                    <div class="grid md:grid-cols-3 gap-8 mb-12">
+
+                          <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                            <div class="text-4xl mb-3" style="color: var(--accent);">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">计算机技能</h3>
+                            <p class="text-gray-600">Unity3D / C# / 机器学习 /Python/JavaScript/ LoRA/ LLM Agents  </p>
+                        </div>
+
+                        
+                        <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                            <div class="text-4xl mb-3" style="color: var(--accent);">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">设计技能</h3>
+                            <p class="text-gray-600">用户研究/ 交互设计/ 原型开发/可用性测试</p>
+                        </div>
+                        
+
+                          <div class="bg-white p-6 rounded-xl shadow-md text-center">
+                            <div class="text-4xl mb-3" style="color: var(--accent);">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">硬件设备</h3>
+                            <p class="text-gray-600"> Apple Vision Pro / Meta Quest SDKs / 传感器  </p>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="text-lg leading-relaxed space-y-6">
+                        <p>
+                            我是一名专注于人机交互(HCI)的设计师和工程师，拥有6年跨学科工作经验。
+                        </p>
+                        <p>
+                            我于2021年香港理工大学获得交互设计硕士学位后，我先在香港理工智能设计实验室进行人机交互研究工作1年，主要研究和设计智能汽车/智能传感器的交互体验。
+                        </p>
+                        
+                        </p>
+                         2022年至今，我在XR 领域的设计和研发部门从事XR中的手势和输入法交互研发工作，例如可用于十指输入的手势交互、远场眼动和手势结合的交互，以及使用梯度下降算法训练LSTM手势模型；
+                        </p>
+                        
+                        </p>
+                        以及AI + XR 交互研究工作，例如通过多任务学习框架和深度学习+XR实现混合现实中UI元素的场景风格化和交互优化。
+                        </p>
+                        
+                        <p>
+                           未来，我希望从机器学习、深度学习和数学角度解决人机交互设计问题。
+                        </p>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 项目 -->
+        <section id="projects" class="py-20" style="background-color: var(--bg-section);">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">精选项目</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                      <!-- 项目 1 -->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="200"
+                           src="https://www.youtube.com/embed/xpcfwCytYEw"
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">XR空间中获得触觉反馈的输入法（2024）</h3>
+                        <p class="text-gray-600 mb-4 text-sm">XR空间中获得触觉反馈的输入法</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">机器学习</span>
+                        <span class="tag">微手势交互</span>
+                        <span class="tag">Unity开发</span>
+                        <span class="tag">LSTM</span>
+                        <span class="tag">混合现实交互</span>
+                            
+                      </div>
+                           <button onclick="window.location.href='project1.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+                 
+                    <!-- 项目 2 -->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="200"
+                           src="https://www.youtube.com/embed/wvOnEsdbUPQ"
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">使用机器学习方法实现十指动作阶段（如休息、打字、抬起等）的自动识别（2025）</h3>
+                        <p class="text-gray-600 mb-4 text-sm">该方法可在视觉受限或传统输入难以实现的场景下，仅凭骨骼运动特征准确判断用户的打字意图</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">机器学习</span>
+                        <span class="tag">微手势交互</span>
+                        <span class="tag">姿势建模</span>
+                        <span class="tag">动作阶段分类</span>
+                        <span class="tag">运动捕捉</span>
+                            
+                      </div>
+                           <button onclick="window.location.href='project2.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+
+                    
+                  <!-- 项目 3 -->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="220"
+                           src="https://www.youtube.com/embed/L4iy4-FH1ho"
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">对话式场景化日程助手（2024）</h3>
+                        <p class="text-gray-600 mb-4 text-sm">基于用户场景和时机推送日程，促进用户高效完成日程</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">AR设计</span>
+                        <span class="tag">AI-Human Interaction</span>
+                        <span class="tag">LLM</span>
+                      </div>
+                           <button onclick="window.location.href='project3.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+
+                      <!-- 项目 4 -->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="220"
+                           src="https://www.youtube.com/embed/tF1grOhBqWI"
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">UI风格化LoRA模型demo（2025）</h3>
+                        <p class="text-gray-600 mb-4 text-sm">深度学习技术，训练模型识别和适应不同的场景风格，是UI能够自然融入用户沉浸式环境。</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">LoRA模型训练</span>
+                        <span class="tag">AI-Human Interaction</span>
+                        <span class="tag">深度学习</span>
+                         <span class="tag">PyTorch</span>
+                      </div>
+                           <button onclick="window.location.href='project4.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 项目 9 -->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="220"
+                           src="https://www.youtube.com/embed/NzYUF3URbcw"
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">EyeHandsMove(2023)</h3>
+                        <p class="text-gray-600 mb-4 text-sm">眼动和手势远程交互</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">多模态交互</span>
+                        <span class="tag">XR</span>
+                        <span class="tag">Unity3D</span>
+                        <span class="tag">眼动交互</span>
+                        <span class="tag">远程手势交互</span>
+
+                      </div>
+                           <button onclick="window.location.href='project9.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+                    
+                   <!-- 项目 5 -->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="220"
+                           src="https://www.youtube.com/embed/4ryUCPeJ9yg""
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">City-chauffeur:AI-based navigation assistant（2021）</h3>
+                        <p class="text-gray-600 mb-4 text-sm">personal & smart navigation assistant in future</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">HMI</span>
+                        <span class="tag">AI-Human Interaction</span>
+                        <span class="tag">Unity 3D</span>
+                      </div>
+                           <button onclick="window.location.href='project5.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+
+                   <!-- 项目 6 -->
+                      <div class="card group">
+                        <img 
+                           src="https://raw.githubusercontent.com/Shay-sponge/PersonalWeb/main/Model.png" 
+                           alt="医疗设备界面" 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           style="width:100%; max-width:1562px; height:auto; aspect-ratio:1562/878;"
+                        >
+                      <div class="p-6 card-content">
+                         <h3 class="text-xl font-bold mb-2">Your Virtual Instructor（2021）</h3>
+                         <p class="text-gray-600 mb-4 text-sm">
+                           Designing for acceptability and trust: the assistive tool based on TAM to train elder drivers to drive with ADAS
+                         </p>
+                     <div class="flex flex-wrap gap-2 mt-auto">
+                          <span class="tag">Unity3D</span>
+                          <span class="tag">包容性设计</span>
+                          <span class="tag">交互模型</span>
+                          <span class="tag">人因工程</span>
+                          <span class="tag">可用性测试</span>
+                          <span class="tag">技术接受模型（TAM）</span>
+                     </div>
+                    <button onclick="window.location.href='project6.html'" class="mt-4 btn-primary w-full text-center">
+                      查看详情
+                    </button>
+                   </div>
+                  </div>
+
+                      <!-- 项目 7-->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="220"
+                           src="https://www.youtube.com/embed/jmCLyPjfvUE"
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">Vineck:neck-control a virtual maze board(2020)</h3>
+                        <p class="text-gray-600 mb-4 text-sm">Movement capture prototype (just for fun) </p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">HCI</span>
+                        <span class="tag">动作捕捉</span>
+                        <span class="tag">用户行为设计</span>
+                      </div>
+                           <button onclick="window.location.href='project7.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+
+                      <!-- 项目 9-->
+                    <div class="card group">
+                        <iframe 
+                           class="card-img group-hover:opacity-90 transition-opacity"
+                           width="100%" height="220"
+                           src="https://www.youtube.com/embed/RKUKCbwob3A" 
+                           title="YouTube video player"
+                           frameborder="0"
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                           allowfullscreen>
+                        </iframe>
+                      <div class="p-6 card-content">
+                        <h3 class="text-xl font-bold mb-2">Mini weather station & clothing suggestions(2020)
+                        </h3>
+                        <p class="text-gray-600 mb-4 text-sm">Wear clothing personalised suggestion</p>
+                        <div class="flex flex-wrap gap-2 mt-auto">
+                        <span class="tag">个性化的AI助理</span>
+                        <span class="tag">IOT</span>
+                        <span class="tag">可用性测试</span>
+                      </div>
+                           <button onclick="window.location.href='project8.html'" class="mt-4 btn-primary w-full text-center">
+                            查看详情
+                            </button>
+                        </div>
+                    </div>
+                    
+                <!-- 项目 10-->
+                 <div class="card group">
+                    <!-- 16:9缩略图容器 -->
+                    <div class="relative w-full" style="padding-top: 56.25%; overflow: hidden; border-radius: 12px;">
+                 <img 
+                    src="1.jpg" 
+                    alt="Data bubble project thumbnail"
+                    class="absolute top-0 left-0 w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                    style="object-position: center 20%;" <!-- 只显示图片中间偏上一段，可根据需要调整百分比 -->
+                 >
+                   </div>
+                   <div class="p-6 card-content">
+                       <h3 class="text-xl font-bold mb-2">Data bubble: manage your private data in sharing cars（2022）</h3>
+                       <p class="text-gray-600 mb-4 text-sm">Protect and manage your personal data in shared vehicles</p>
+                       <div class="flex flex-wrap gap-2 mt-auto">
+                       <span class="tag">物理按键交互</span>
+                       <span class="tag">数据可视化</span>
+                       <span class="tag">隐私安全</span>
+                  </div>
+                <button onclick="window.location.href='project10.html'" class="mt-4 btn-primary w-full text-center">
+                 查看详情
+               </button>
+           </div>
+         </div>
+
+                      <!-- 项目 11-->
+                     <div class="card group">
+                    <!-- 正方形缩略图容器 -->
+                   <div class="relative w-full" style="padding-top: 100%; overflow: hidden; border-radius: 12px;">
+                     <img 
+                         src="Design.jpg" 
+                         alt="Data bubble project thumbnail"
+                         class="absolute top-0 left-0 w-full h-full object-cover group-hover:opacity-90 transition-opacity"
+                      >
+                   </div>
+                   <div class="p-6 card-content">
+                      <h3 class="text-xl font-bold mb-2">为视障人群打造的无障碍短视频社交应用（2019）</h3>
+                      <p class="text-gray-600 mb-4 text-sm">让视障人群也能“看”和制作视频</p>
+                      <div class="flex flex-wrap gap-2 mt-auto">
+                      <span class="tag">包容性设计</span>
+                      <span class="tag">AI-Agents</span>
+                      <span class="tag">Human-AI Interaction</span>
+                   </div>
+                   <button onclick="window.location.href='project11.html'" class="mt-4 btn-primary w-full text-center">
+                      查看详情
+                   </button>
+               </div>
+           </div>
+
+                    
+                </div>
+            </div>
+        </section>
+
+    <!-- 专利 -->
+<section id="patents" class="py-20">
+    <div class="container mx-auto px-6">
+        <h2 class="section-title">专利成果</h2>
+        <div class="max-w-4xl mx-auto space-y-6">
+            <!-- 专利 1 -->
+            <div class="bg-white p-8 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <h3 class="text-xl font-bold">一种基于拓展现实的UI风格化方法及装置</h3>
+                <p class="text-gray-500 mb-3 text-sm">专利号: CN120014210A | 公开日期: 2025年5月</p>
+                <p class="leading-relaxed mb-4">
+                   该专利通过机器学习和深度学习技术，训练模型识别和适应不同的场景风格，使UI能够自然融入用户沉浸式环境。本专利的核心技术路径是，生成式 A 流水线GenAD :ILM 理解场景，生成指令，文生图模型生成各 UI元素 ，复合损失函数反馈微调。在一个针对 XR 场景的、更复杂的、具备闭环反馈机制的生成流程中，“理解场景风格并将其创造性地应用于UI上。
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="tag">计算机交互的输入/输出</span>
+                    <span class="tag">机器学习</span>
+                    <span class="tag">图像数据处理</span>
+                </div>
+                <a href="CN120014210A.pdf" target="_blank" class="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">查看专利PDF</a>
+            </div>
+
+             <!-- 专利 2 -->
+            <div class="bg-white p-8 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <h3 class="text-xl font-bold">拓展现实中获得触觉反馈的输入方法、装置及设备</h3>
+                <p class="text-gray-500 mb-3 text-sm">专利号: CN119440265A | 公开日期: 2025年2月</p>
+                <p class="leading-relaxed mb-4">
+                    该专利通过将用户身体表面作为预设输入面，跟踪输入源与输入面之间的关系，渲染虚拟键盘。用户通过身体部位交互完成输入，解决了现有技术中输入便携性差、速度慢、精度受限的问题，实现了便捷自然的交互和真实触觉反馈。
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="tag">计算机交互的输入/输出</span>
+                    <span class="tag">工程学</span>
+                    <span class="tag">触觉交互</span>
+                </div>
+                <a href="CN119440265A.pdf" target="_blank" class="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">查看专利PDF</a>
+            </div>
+
+            <!-- 专利 3 -->
+            <div class="bg-white p-8 rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <h3 class="text-xl font-bold">拓展现实系统中分阶段交互方法、装置、设备存储介质</h3>
+                <p class="text-gray-500 mb-3 text-sm">专利号: CN119200830A | 公开日期: 2024年12月</p>
+                <p class="leading-relaxed mb-4">
+                    本说明书涉及XR技术领域，提供了一种拓展现实系统中分阶段交互方法、装置、设备及存储介质，该方法包括：获取为交互第一阶段配置的第一指定交互方式及为交互第二阶段配置的第二指定交互方式，所述交互第一阶段用于更新目标交互对象，所述交互第二阶段用于控制目标交互对象；获取所述第一指定交互方式的动作第一幅度值和所述第二指定交互方式的动作第二幅度值；根据所述动作第一幅度值和所述动作第二幅度值分别与对应激活阈值的关系，识别系统当前所处交互阶段；响应并处理所述系统当前所处交互阶段对应交互方式的输入。本说明书实施例可以提高XR空间下交互的灵活性、可用性和容错性，并兼顾降低系统开销。
+                </p>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="tag">控制工程</span>
+                    <span class="tag">计算机交互的输入/输出</span>
+                    <span class="tag">提高容错率</span>
+                </div>
+                <a href="CN119200830A.pdf" target="_blank" class="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">查看专利PDF</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+       
+
+        <!-- 联系我 -->
+        <section id="contact" class="py-20">
+            <div class="container mx-auto px-6">
+                <h2 class="section-title">联系我</h2>
+                    <div class="mt-8 text-center text-gray-500">
+                        <p><i class="fas fa-envelope mr-2"></i>邮箱：shay917@outlook.com</p>
+                        <p><i class="fab fa-weixin mr-2"></i>微信：sponge917</p>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 项目详情模态框 -->
+        <div id="project1-modal" class="modal" onclick="closeModal(event, 'project1-modal')">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h3 class="text-2xl font-bold mb-4">智能家居控制系统</h3>
+                <p class="mb-4">为老年用户设计的智能家居控制界面，采用极简布局和大字号，结合语音与触摸双模交互。通过用户访谈和可用性测试，显著提升了老年用户的操作效率和满意度。</p>
+                <ul class="list-disc pl-6 mb-4 text-gray-700">
+                    <li>主导用户需求调研与竞品分析</li>
+                    <li>设计高对比度、易识别的界面元素</li>
+                    <li>开发可交互原型并组织5轮用户测试</li>
+                </ul>
+                <button class="btn-primary mt-4" onclick="closeModal(event, 'project1-modal')">关闭</button>
+            </div>
+        </div>
+        <div id="project2-modal" class="modal" onclick="closeModal(event, 'project2-modal')">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h3 class="text-2xl font-bold mb-4">AR室内导航应用</h3>
+                <p class="mb-4">为大型商场开发的AR导航App，结合空间定位与视觉引导，帮助用户快速找到目标店铺。项目涵盖AR路径规划、实时导航提示和多语言支持。</p>
+                <ul class="list-disc pl-6 mb-4 text-gray-700">
+                    <li>负责交互流程设计与AR界面原型开发</li>
+                    <li>与开发团队协作实现ARKit/ARCore集成</li>
+                    <li>组织30+用户参与的可用性测试</li>
+                </ul>
+                <button class="btn-primary mt-4" onclick="closeModal(event, 'project2-modal')">关闭</button>
+            </div>
+        </div>
+        <div id="project3-modal" class="modal" onclick="closeModal(event, 'project3-modal')">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h3 class="text-2xl font-bold mb-4">医疗设备用户界面</h3>
+                <p class="mb-4">为急诊医疗设备设计的高效操作界面，优化信息层级与操作流程，减少医护人员在紧急情况下的误操作。</p>
+                <ul class="list-disc pl-6 mb-4 text-gray-700">
+                    <li>主导界面信息架构与交互流程设计</li>
+                    <li>采用人因工程方法优化按钮布局</li>
+                    <li>与医护专家合作进行场景模拟测试</li>
+                </ul>
+                <button class="btn-primary mt-4" onclick="closeModal(event, 'project3-modal')">关闭</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-8 bg-[var(--hero-bg)] text-[var(--text-light)] text-center">
+        <div class="container mx-auto px-6">
+            <p class="mb-2">&copy; 2024 江晓云 | HCI人机交互设计师/工程师</p>
+            <div class="flex justify-center space-x-4 text-xl">
+                <a href="mailto:xiaoyun.jiang@example.com" class="hover:text-[var(--accent)]"><i class="fas fa-envelope"></i></a>
+                <a href="https://linkedin.com/in/xiaoyunjiang" target="_blank" class="hover:text-[var(--accent)]"><i class="fab fa-linkedin"></i></a>
+                <a href="#" class="hover:text-[var(--accent)]"><i class="fab fa-weixin"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 脚本：移动端菜单与模态框 -->
+    <script>
+        // 移动端菜单
+        const menuBtn = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 模态框
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(event, id) {
+            event.stopPropagation();
+            document.getElementById(id).style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    </script>
 </body>
 </html>
